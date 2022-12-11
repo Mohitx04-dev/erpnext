@@ -159,14 +159,15 @@ def rename_address(address, customer):
 def link_items(items_list, woocommerce_settings, sys_lang):
 	for item_data in items_list:
 		item_woo_com_id = cstr(item_data.get("product_id"))
-
+		item_woo_com_vid = cstr(item_data.get("variation_id")) #variation id
+		if(variation_id!="0") item_woo_com_id = item_woo_com_vid
 		if not frappe.db.get_value("Item", {"woocommerce_id": item_woo_com_id}, "name"):
 			# Create Item
 			item = frappe.new_doc("Item")
 			item.item_code = _("woocommerce - {0}", sys_lang).format(item_woo_com_id)
 			item.stock_uom = woocommerce_settings.uom or _("Nos", sys_lang)
 			item.item_group = _("WooCommerce Products", sys_lang)
-
+			
 			item.item_name = item_data.get("name")
 			item.woocommerce_id = item_woo_com_id
 			item.flags.ignore_mandatory = True
@@ -217,13 +218,13 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 				"delivery_date": new_sales_order.delivery_date,
 				"uom": woocommerce_settings.uom or _("Nos", sys_lang),
 				"qty": item.get("quantity"),
-				"rate": item.get("price"),
+				"rate": item.get("subtotal"), #Changed from price to subtotal
 				"warehouse": woocommerce_settings.warehouse or default_warehouse,
 			},
 		)
 
-		add_tax_details(
-			new_sales_order, ordered_items_tax, "Ordered Item tax", woocommerce_settings.tax_account
+		add_product_gst(
+			new_sales_order, "Ordered Item tax", woocommerce_settings.tax_account
 		)
 
 	# shipping_details = order.get("shipping_lines") # used for detailed order
@@ -232,13 +233,29 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 		new_sales_order, order.get("shipping_tax"), "Shipping Tax", woocommerce_settings.f_n_f_account
 	)
 	add_tax_details(
+		new_sales_order, order.get("fee_lines").total, "Fees", woocommerce_settings.f_n_f_account
+	) #Fees from Fee lines added in f_n_f account
+	add_tax_details(
 		new_sales_order,
 		order.get("shipping_total"),
 		"Shipping Total",
 		woocommerce_settings.f_n_f_account,
 	)
+	add_discount_details(
+		new_sales_order, 
+		order.get("coupon_lines").discount, 
+		order.get("coupon_lines").code
+	) #added coupon details
 
-
+def add_product_gst(sales_order, desc, tax_account_head):
+	sales_order.append(
+		"taxes",
+		{
+			"charge_type": "On Net Total",
+			"account_head": tax_account_head,
+			"description": desc,
+		},
+	)
 def add_tax_details(sales_order, price, desc, tax_account_head):
 	sales_order.append(
 		"taxes",
@@ -249,3 +266,10 @@ def add_tax_details(sales_order, price, desc, tax_account_head):
 			"description": desc,
 		},
 	)
+def add_discount_details(sales_order, discount, code):
+	sales_order.append(
+	{apply_discount_on : "Net Total"},
+	{base_discount_amount : discount},
+	{coupon_code : code}
+	)
+	
