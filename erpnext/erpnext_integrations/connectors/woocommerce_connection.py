@@ -79,9 +79,9 @@ def link_customer_and_address(raw_billing_data, raw_shipping_data, customer_name
 	customer.woocommerce_email = customer_woo_com_email
 	customer.flags.ignore_mandatory = True
 	customer.save()
-
 	if customer_exists:
-		frappe.rename_doc("Customer", old_name, customer_name)
+		if(old_name!=customer_name):
+			frappe.rename_doc("Customer", old_name, customer_name)
 		for address_type in (
 			"Billing",
 			"Shipping",
@@ -152,8 +152,8 @@ def rename_address(address, customer):
 	new_address_title = customer.name + "-" + address.address_type
 	address.address_title = customer.customer_name
 	address.save()
-
-	frappe.rename_doc("Address", old_address_title, new_address_title)
+	if(old_address_title!=new_address_title):
+		frappe.rename_doc("Address", old_address_title, new_address_title)
 
 
 def link_items(items_list, woocommerce_settings, sys_lang):
