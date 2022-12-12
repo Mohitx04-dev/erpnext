@@ -281,7 +281,7 @@ def add_tax_details(sales_order, price, desc, tax_account_head):
 		},
 	)
 def add_discount_details(sales_order, discount, ):
-	sales_order.apply_discount_on  = "Net Total"
-	sales_order.discount_amount = discount
+	sales_order.apply_discount_on  = "Grand Total"
+	sales_order.discount_amount = float(discount)
 	
 	
