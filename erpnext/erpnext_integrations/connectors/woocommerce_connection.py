@@ -233,19 +233,24 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 	add_tax_details(
 		new_sales_order, order.get("shipping_tax"), "Shipping Tax", woocommerce_settings.f_n_f_account
 	)
-	add_tax_details(
-		new_sales_order, order.get("fee_lines").total, "Fees", woocommerce_settings.f_n_f_account
-	) #Fees from Fee lines added in f_n_f account
+	for fee in order.get("fee_lines):
+		add_tax_details(
+		new_sales_order,
+		fee.total, 
+		"Fees", 
+		woocommerce_settings.f_n_f_account
+		) #Fees from Fee lines added in f_n_f account
+	
 	add_tax_details(
 		new_sales_order,
 		order.get("shipping_total"),
 		"Shipping Total",
 		woocommerce_settings.f_n_f_account,
-	)
+	)  
 	add_discount_details(
 		new_sales_order, 
-		order.get("coupon_lines").discount, 
-		order.get("coupon_lines").code
+		order.get("coupon_lines")[0].discount, 
+		order.get("coupon_lines")[0].code
 	) #added coupon details
 
 def add_product_gst(sales_order, desc, tax_account_head):
