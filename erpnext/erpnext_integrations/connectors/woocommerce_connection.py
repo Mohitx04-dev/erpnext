@@ -205,11 +205,11 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 		frappe.throw(_("Please set Warehouse in Woocommerce Settings"))
 
 	for item in order.get("line_items"):
-		woocomm_item_id = item.get("product_id")
-		woocomm_item_vid = cstr(item_data.get("variation_id")) #variation id
+		woocomm_item_id = cstr(item.get("product_id"))
+		woocomm_item_vid = cstr(item.get("variation_id")) #variation id
 		if(woocomm_item_vid!="0"):
 			woocomm_item_id = woocomm_item_vid
-		found_item = frappe.get_doc("Item", {"woocommerce_id": cstr(woocomm_item_id)})
+		found_item = frappe.get_doc("Item", {"woocommerce_id": woocomm_item_id})
 
 		ordered_items_tax = item.get("total_tax")
 
