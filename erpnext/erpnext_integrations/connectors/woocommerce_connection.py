@@ -160,7 +160,7 @@ def link_items(items_list, woocommerce_settings, sys_lang):
 	for item_data in items_list:
 		item_woo_com_id = cstr(item_data.get("product_id"))
 		item_woo_com_vid = cstr(item_data.get("variation_id")) #variation id
-		if(variation_id!="0") item_woo_com_id = item_woo_com_vid
+		if(item_woo_com_vid!="0") item_woo_com_id = item_woo_com_vid
 		if not frappe.db.get_value("Item", {"woocommerce_id": item_woo_com_id}, "name"):
 			# Create Item
 			item = frappe.new_doc("Item")
