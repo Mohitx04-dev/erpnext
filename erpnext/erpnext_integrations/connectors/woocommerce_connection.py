@@ -278,6 +278,5 @@ def add_tax_details(sales_order, price, desc, tax_account_head):
 def add_discount_details(sales_order, discount, code):
 	sales_order.apply_discount_on  = "Net Total"
 	sales_order.base_discount_amount = discount
-	sales_order.coupon_code = code
 	
 	
