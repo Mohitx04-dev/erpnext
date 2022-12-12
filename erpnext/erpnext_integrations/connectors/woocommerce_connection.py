@@ -227,8 +227,11 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 			},
 		)
 
-	add_product_gst(
-		new_sales_order, "Ordered Item tax", woocommerce_settings.tax_account, order
+	add_tax_details(
+		new_sales_order, 
+		order.get("cart_tax")
+		"Ordered Item tax",
+		woocommerce_settings.tax_account, 
 	)
 
 	# shipping_details = order.get("shipping_lines") # used for detailed order
@@ -252,21 +255,20 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 	)  
 	add_discount_details(
 		new_sales_order, 
-		order.get("coupon_lines")[0].get("discount"), 
-		order.get("coupon_lines")[0].get("code")
-	) #added coupon details
+		order.get("discount_total"), 
+	) 
 
-def add_product_gst(sales_order, desc, tax_account_head, order):
-	sales_order.append(
-		"taxes",
-		{
-			"charge_type": "On Net Total",
-			"account_head": tax_account_head,
-			"description": desc,
-			"tax_amount": order.get("cart_tax")
-
-		},
-	)
+#def add_product_gst(sales_order, desc, tax_account_head, amount):
+#	sales_order.append(
+#		"taxes",
+#		{
+#			"charge_type": "On Net Total",
+#			"account_head": tax_account_head,
+#			"description": desc,
+#			"tax_amount": amount
+#
+#		},
+#	)
 def add_tax_details(sales_order, price, desc, tax_account_head):
 	sales_order.append(
 		"taxes",
@@ -277,7 +279,7 @@ def add_tax_details(sales_order, price, desc, tax_account_head):
 			"description": desc,
 		},
 	)
-def add_discount_details(sales_order, discount, code):
+def add_discount_details(sales_order, discount, ):
 	sales_order.apply_discount_on  = "Net Total"
 	sales_order.discount_amount = discount
 	
