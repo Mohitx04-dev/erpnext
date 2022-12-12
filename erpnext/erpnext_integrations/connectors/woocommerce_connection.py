@@ -229,7 +229,7 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 
 	add_tax_details(
 		new_sales_order, 
-		order.get("cart_tax")
+		order.get("cart_tax"),
 		"Ordered Item tax",
 		woocommerce_settings.tax_account, 
 	)
