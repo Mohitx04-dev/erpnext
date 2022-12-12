@@ -233,7 +233,7 @@ def set_items_in_sales_order(new_sales_order, woocommerce_settings, order, sys_l
 	add_tax_details(
 		new_sales_order, order.get("shipping_tax"), "Shipping Tax", woocommerce_settings.f_n_f_account
 	)
-	for fee in order.get("fee_lines):
+	for fee in order.get("fee_lines"):
 		add_tax_details(
 		new_sales_order,
 		fee.total, 
